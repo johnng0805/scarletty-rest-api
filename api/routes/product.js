@@ -23,7 +23,7 @@ router.get("/:id/images", validateRule("paramID"), validate, ProductImageControl
 // --- Add Product
 router.post("/info", Auth, validateRule("addProduct"), validate, ProductController.add);
 // --- Add Product's images
-router.post("/images", function (req, res, next) {
+router.post("/images", Auth, validateRule("addImages"), validate, function (req, res, next) {
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             return res.status(413).json({
@@ -36,10 +36,10 @@ router.post("/images", function (req, res, next) {
         }
         next();
     });
-}, validateRule("addImages"), validate, ProductImageController.addImages);
+}, ProductImageController.addImages);
 // --- Delete all Product's images
 router.delete("/:id/images", Auth, validateRule("paramID"), validate, ProductImageController.deleteAll);
 // --- Delete Product's images by IDs
-router.delete("/images/ids", Auth, ProductImageController.deleteByID);
+router.delete("/images/ids", Auth, validateRule("deleteImagesByIDs"), validate, ProductImageController.deleteByID);
 
 module.exports = router;

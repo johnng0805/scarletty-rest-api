@@ -64,6 +64,12 @@ const validateRule = (method) => {
                 body("product_id").notEmpty().isNumeric()
             ]
         }
+        case "deleteImagesByIDs": {
+            return [
+                body("product_id").notEmpty().isNumeric(),
+                body("image_id").notEmpty().isArray()
+            ]
+        }
     }
 }
 
