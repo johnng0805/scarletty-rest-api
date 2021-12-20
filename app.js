@@ -7,6 +7,7 @@ const UserRoutes = require("./api/routes/user");
 const CategoryRoutes = require("./api/routes/category");
 const VendorRoutes = require("./api/routes/vendor");
 const ProductRoutes = require("./api/routes/product");
+const CartRoutes = require("./api/routes/cart");
 
 const app = express();
 const router = express.Router();
@@ -28,6 +29,8 @@ router.use("/category", CategoryRoutes);
 router.use("/vendor", VendorRoutes);
 // --- Product
 router.use("/product", ProductRoutes);
+// --- Cart
+router.use("/cart", CartRoutes);
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server starting...");

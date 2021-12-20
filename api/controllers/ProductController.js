@@ -1,4 +1,3 @@
-const res = require("express/lib/response");
 const { Op } = require("sequelize");
 const { Product, Category, Vendor } = require("../../database/models");
 
