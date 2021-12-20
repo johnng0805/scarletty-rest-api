@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
         });
 
         if (!user || !bcrypt.compareSync(password, user.password)) {
-            res.status(401).json({
+            return res.status(401).json({
                 "error": "Email or password is incorrect"
             });
         }
@@ -50,8 +50,6 @@ exports.login = async (req, res) => {
                 user_id: user.id
             }
         });
-
-        console.log(cart.id);
 
         const token = await jwt.sign({
             "user_id": user.id,
@@ -66,9 +64,9 @@ exports.login = async (req, res) => {
 
         delete user.dataValues["password"];
 
-        res.status(200).send(user);
+        return res.status(200).send(user);
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             "error": "Internal server error"
         });
     }

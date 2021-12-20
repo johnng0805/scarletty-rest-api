@@ -1,14 +1,14 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const UserController = require("../controllers/UserController");
 /* --- Middlewares --- */
 const { validate, validateRule } = require("../middlewares/Input");
 const Auth = require("../middlewares/Auth");
+const RateLimit = require("../middlewares/RateLimit");
 
 const router = express.Router();
 
-router.post("/register", validateRule("registerUser"), validate, UserController.register);
-router.post("/login", validateRule("loginUser"), validate, UserController.login);
+router.post("/register", RateLimit, validateRule("registerUser"), validate, UserController.register);
+router.post("/login", RateLimit, validateRule("loginUser"), validate, UserController.login);
 
 /* --- Protected Routes --- */
 router.get("/info/:id", Auth, validateRule("paramID"), validate, UserController.getUserByID);
