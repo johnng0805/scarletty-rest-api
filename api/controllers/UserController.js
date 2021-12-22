@@ -1,4 +1,6 @@
-const { User, Cart } = require("../../database/models");
+const { User, Cart, Activation_Token } = require("../../database/models");
+const sendMail = require("../../utils/SendMail");
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -16,13 +18,50 @@ exports.register = async (req, res) => {
         });
         delete newUser.dataValues["password"];
 
+        let token = await Activation_Token.create({
+            user_id: newUser.dataValues.id,
+            token: crypto.randomBytes(32).toString("hex")
+        });
+
+        const message = `${process.env.APP_URL}:${process.env.APP_PORT}/api/user/verify/${newUser.dataValues.id}/${token.token}`;
+        await sendMail(newUser.dataValues.email, "Scarletty - Verify Email", message);
+
         return res.status(201).send(newUser);
     } catch (error) {
-        return res.status(500).json({
-            "error": error.errors[0].message,
-            "value": error.errors[0].value,
-            "path": error.errors[0].path
+        return res.status(500).send(error);
+    }
+}
+
+exports.verify = async (req, res, next) => {
+    const user_id = req.params.user_id;
+    const token = req.params.token;
+
+    try {
+        const user = await Activation_Token.findOne({
+            where: {
+                user_id: user_id,
+            }
         });
+
+        if (!user || !token === user.dataValues.token) {
+            return res.status(401).json({
+                "error": "Invalid link"
+            });
+        }
+
+        await User.update({
+            verified: true
+        }, {
+            where: {
+                id: user_id
+            }
+        });
+
+        return res.status(200).json({
+            "status": "Email verified"
+        });
+    } catch (error) {
+        return res.status(500).send(error);
     }
 }
 
@@ -39,6 +78,12 @@ exports.login = async (req, res) => {
         if (!user || !bcrypt.compareSync(password, user.password)) {
             return res.status(401).json({
                 "error": "Email or password is incorrect"
+            });
+        }
+
+        if (!user.dataValues.verified) {
+            return res.status(401).json({
+                "error": "Please verify email address"
             });
         }
 
@@ -138,4 +183,16 @@ exports.updateUserByID = async (req, res) => {
             "error": "Internal server error"
         });
     }
+}
+
+exports.testEmail = async (req, res, next) => {
+    let email = "johnng0805@gmail.com";
+    let subject = "Scarletty API";
+    let text = "Hello friend...";
+
+    await sendMail(email, subject, text);
+
+    return res.status(200).json({
+        "status": "email sent"
+    });
 }
