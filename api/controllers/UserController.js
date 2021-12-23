@@ -57,6 +57,12 @@ exports.verify = async (req, res, next) => {
             }
         });
 
+        await Activation_Token.destroy({
+            where: {
+                user_id: user_id
+            }
+        });
+
         return res.status(200).json({
             "status": "Email verified"
         });
@@ -195,4 +201,78 @@ exports.testEmail = async (req, res, next) => {
     return res.status(200).json({
         "status": "email sent"
     });
+}
+
+exports.resetPassword = async (req, res, next) => {
+    const { email } = req.body.email;
+
+    try {
+        let user = await User.findOne({
+            where: {
+                email: email
+            }
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                "error": "Invalid email"
+            });
+        }
+
+        let token = await Activation_Token.create({
+            user_id: user.dataValues.id,
+            token: crypto.randomBytes(32).toString("hex")
+        });
+
+        if (!token) {
+            return res.status(500).json({
+                "error": "Could not reset password"
+            });
+        }
+
+        let message = `${process.env.APP_URL}:${process.env.APP_PORT}/api/user/reset/verify/${user.dataValues.id}/${message}`;
+
+        await sendMail(user.dataValues.email, "Scarletty - Reset Password", message);
+
+        return res.status(200).json({
+            "status": "Email sent successfully"
+        });
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+}
+
+exports.verifyReset = async (req, res, next) => {
+    const { user_id, token } = req.params;
+    const { password } = req.body;
+
+    try {
+        let userToken = await Activation_Token.findOne({
+            where: {
+                user_id: user_id
+            }
+        });
+
+        if (!userToken || token !== userToken.dataValues.token) {
+            return res.status(404).json({
+                "error": "Invalid Link"
+            })
+        }
+
+        let hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+        await User.update({
+            password: hashedPassword
+        }, {
+            where: {
+                id: user_id
+            }
+        });
+
+        return res.status(200).json({
+            "status": "Password reset successfully"
+        })
+    } catch (error) {
+        return res.status(500).send(error);
+    }
 }

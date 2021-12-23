@@ -14,6 +14,9 @@ router.post("/login", RateLimit, validateRule("loginUser"), validate, UserContro
 router.get("/info/:id", Auth, validateRule("paramID"), validate, UserController.getUserByID);
 router.put("/info/:id", Auth, validateRule("updateUserByID"), validate, UserController.updateUserByID);
 
-router.get("/verify/:user_id/:token", UserController.verify);
+router.get("/verify/:user_id/:token", validateRule("verifyUser"), validate, UserController.verify);
+
+router.post("/reset/password", validateRule("email"), validate, UserController.resetPassword);
+router.post("/reset/verify/:user_id/:token", validateRule("verifyResetPassword"), validate, UserController.verifyReset);
 
 module.exports = router;

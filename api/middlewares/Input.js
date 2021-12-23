@@ -70,6 +70,31 @@ const validateRule = (method) => {
                 body("image_id").notEmpty().isArray()
             ]
         }
+        case "verifyUser": {
+            return [
+                param("user_id", "Invalid Link").notEmpty().isNumeric(),
+                param("token", "Invaid Link").notEmpty().isAlphanumeric()
+            ]
+        }
+        case "email": {
+            return [
+                body("email", "Invalid Email").notEmpty().isEmail().normalizeEmail(),
+            ]
+        }
+        case "verifyResetPassword": {
+            return [
+                body("password", "Password can only contain letters and numbers").notEmpty().isAlphanumeric(),
+                body("password_confirmation").custom((value, { req }) => {
+                    if (value !== req.body.password) {
+                        throw new Error("Password confirmation does not match");
+                    } else {
+                        return true;
+                    }
+                }),
+                param("user_id", "Invalid Link").notEmpty().isNumeric(),
+                param("token", "Invaid Link").notEmpty().isAlphanumeric()
+            ]
+        }
     }
 }
 
