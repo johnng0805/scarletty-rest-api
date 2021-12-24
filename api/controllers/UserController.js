@@ -23,7 +23,7 @@ exports.register = async (req, res) => {
             token: crypto.randomBytes(32).toString("hex")
         });
 
-        const message = `${process.env.APP_URL}:${process.env.APP_PORT}/api/user/verify/${newUser.dataValues.id}/${token.token}`;
+        const message = `${process.env.APP_URL}/api/user/verify/${newUser.dataValues.id}/${token.token}`;
         await sendMail(newUser.dataValues.email, "Scarletty - Verify Email", message);
 
         return res.status(201).send(newUser);
