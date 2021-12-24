@@ -5,7 +5,7 @@ const ProductController = require("../controllers/ProductController");
 const ProductImageController = require("../controllers/ProductImageController");
 /* --- Middlewares --- */
 const { validateRule, validate } = require("../middlewares/Input");
-const Auth = require("../middlewares/Auth");
+const AuthAdmin = require("../middlewares/AuthAdmin");
 const upload = require("../middlewares/Upload").any("product_image", 5);
 
 const router = express.Router();
@@ -21,9 +21,9 @@ router.get("/category/:id", validateRule("paramID"), validate, ProductController
 // --- Get all Product's images
 router.get("/:id/images", validateRule("paramID"), validate, ProductImageController.getImages);
 // --- Add Product
-router.post("/info", Auth, validateRule("addProduct"), validate, ProductController.add);
+router.post("/info", AuthAdmin, validateRule("addProduct"), validate, ProductController.add);
 // --- Add Product's images
-router.post("/images", Auth, validateRule("addImages"), validate, function (req, res, next) {
+router.post("/images", AuthAdmin, validateRule("addImages"), validate, function (req, res, next) {
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             return res.status(413).json({
@@ -38,8 +38,8 @@ router.post("/images", Auth, validateRule("addImages"), validate, function (req,
     });
 }, ProductImageController.addImages);
 // --- Delete all Product's images
-router.delete("/:id/images", Auth, validateRule("paramID"), validate, ProductImageController.deleteAll);
+router.delete("/:id/images", AuthAdmin, validateRule("paramID"), validate, ProductImageController.deleteAll);
 // --- Delete Product's images by IDs
-router.delete("/images/ids", Auth, validateRule("deleteImagesByIDs"), validate, ProductImageController.deleteByID);
+router.delete("/images/ids", AuthAdmin, validateRule("deleteImagesByIDs"), validate, ProductImageController.deleteByID);
 
 module.exports = router;

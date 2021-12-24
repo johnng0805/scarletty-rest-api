@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv").config;
 const cors = require("cors");
 const path = require("path");
+const session = require("express-session");
 /* --- API Import ---*/
 const UserRoutes = require("./api/routes/user");
 const CategoryRoutes = require("./api/routes/category");
@@ -15,6 +16,15 @@ const router = express.Router();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(session({
+    secret: process.env.APP_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        maxAge: 60 * 1000 * 60
+    }
+}))
 app.use("/static", express.static(path.join(__dirname, "public")));
 app.use("/api", router);
 

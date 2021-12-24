@@ -93,6 +93,11 @@ exports.login = async (req, res) => {
             });
         }
 
+        if (user.dataValues.isAdmin) {
+            req.session.isAdmin = true;
+            req.session.user_id = user.dataValues.id;
+        }
+
         let [cart, created] = await Cart.findOrCreate({
             where: {
                 user_id: user.id
@@ -114,6 +119,7 @@ exports.login = async (req, res) => {
         user.dataValues["token_type"] = "Bearer";
 
         delete user.dataValues["password"];
+        delete user.dataValues["isAdmin"];
 
         return res.status(200).send(user);
     } catch (error) {
@@ -163,6 +169,12 @@ exports.updateUserByID = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 "error": "User not found"
+            });
+        }
+
+        if (user.id !== req.user.id) {
+            return res.status(401).json({
+                "error": "Unauthorized"
             });
         }
 
