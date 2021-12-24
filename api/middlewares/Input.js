@@ -98,7 +98,7 @@ const validateRule = (method) => {
         case "addAddress": {
             return [
                 body("address", "Invalid characters").notEmpty().trim().escape(),
-                body("city", "Invalid characters").notEmpty().isAlphanumeric(),
+                body("city", "Invalid characters").notEmpty().matches(/^[a-zA-Z0-9 ]+$/),
                 body("phone", "Invalid phone number").notEmpty().isMobilePhone()
             ]
         }
@@ -106,9 +106,26 @@ const validateRule = (method) => {
             return [
                 body("id", "Invalid ID").notEmpty().isNumeric(),
                 body("address", "Invalid characters").notEmpty().trim().escape(),
-                body("city", "Invalid characters").notEmpty().isAlphanumeric(),
+                body("city", "Invalid characters").notEmpty().matches(/^[a-zA-Z0-9 ]+$/),
                 body("phone", "Invalid phone number").notEmpty().isMobilePhone()
             ]
+        }
+        case "addPayment": {
+            return [
+                body("type").notEmpty().isAlpha(),
+                body("provider").optional({ checkFalsy: true }).isAlpha(),
+                body("account_number").optional({ checkFalsy: true }).isAlphanumeric(),
+                body("expiry").optional({ checkFalsy: true }).isDate()
+            ];
+        }
+        case "updatePayment": {
+            return [
+                param("id").notEmpty().isNumeric(),
+                body("type").notEmpty().isAlpha(),
+                body("provider").optional({ checkFalsy: true }).isAlpha(),
+                body("account_number").optional({ checkFalsy: true }).isAlphanumeric(),
+                body("expiry").optional({ checkFalsy: true }).isDate()
+            ];
         }
     }
 }

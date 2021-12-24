@@ -3,7 +3,7 @@ const express = require("express");
 const DeliveryController = require("../controllers/DeliveryController");
 
 const { validate, validateRule } = require("../middlewares/Input");
-const Auth = ("../middlewares/Auth");
+const Auth = require("../middlewares/Auth");
 
 const router = express.Router();
 
@@ -17,3 +17,5 @@ router.post("/info", Auth, validateRule("addAddress"), validate, DeliveryControl
 router.put("/info", Auth, validateRule("updateAddress"), validate, DeliveryController.updateAddress);
 // --- Delete address
 router.delete("/info/:id", Auth, validateRule("paramID"), validate, DeliveryController.removeAddress);
+
+module.exports = router;

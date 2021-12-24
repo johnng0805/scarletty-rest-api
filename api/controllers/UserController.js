@@ -146,6 +146,7 @@ exports.getUserByID = async (req, res) => {
         }
 
         delete user.dataValues["password"];
+        delete user.dataValues["isAdmin"];
 
         return res.status(200).send(user);
     } catch (error) {
@@ -201,18 +202,6 @@ exports.updateUserByID = async (req, res) => {
             "error": "Internal server error"
         });
     }
-}
-
-exports.testEmail = async (req, res, next) => {
-    let email = "johnng0805@gmail.com";
-    let subject = "Scarletty API";
-    let text = "Hello friend...";
-
-    await sendMail(email, subject, text);
-
-    return res.status(200).json({
-        "status": "email sent"
-    });
 }
 
 exports.resetPassword = async (req, res, next) => {
