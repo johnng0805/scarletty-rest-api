@@ -95,6 +95,21 @@ const validateRule = (method) => {
                 param("token", "Invaid Link").notEmpty().isAlphanumeric()
             ]
         }
+        case "addAddress": {
+            return [
+                body("address", "Invalid characters").notEmpty().trim().escape(),
+                body("city", "Invalid characters").notEmpty().isAlphanumeric(),
+                body("phone", "Invalid phone number").notEmpty().isMobilePhone()
+            ]
+        }
+        case "updateAddress": {
+            return [
+                body("id", "Invalid ID").notEmpty().isNumeric(),
+                body("address", "Invalid characters").notEmpty().trim().escape(),
+                body("city", "Invalid characters").notEmpty().isAlphanumeric(),
+                body("phone", "Invalid phone number").notEmpty().isMobilePhone()
+            ]
+        }
     }
 }
 
