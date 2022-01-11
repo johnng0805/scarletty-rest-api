@@ -11,6 +11,7 @@ const ProductRoutes = require("./api/routes/product");
 const CartRoutes = require("./api/routes/cart");
 const DeliveryRoutes = require("./api/routes/delivery");
 const PaymentRoutes = require("./api/routes/payment");
+const CheckoutRoutes = require("./api/routes/checkout");
 
 const app = express();
 const router = express.Router();
@@ -47,6 +48,8 @@ router.use("/cart", CartRoutes);
 router.use("/shipping", DeliveryRoutes);
 // --- Payment
 router.use("/payment", PaymentRoutes);
+// --- Checkout
+router.use("/checkout", CheckoutRoutes);
 
 app.listen(process.env.APP_PORT || 3000, () => {
     console.log("Server starting...");
