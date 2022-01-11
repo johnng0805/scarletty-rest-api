@@ -6,7 +6,7 @@ const Auth = require("../middlewares/Auth");
 const router = express.Router();
 
 // --- Get all Cart Items
-router.get("/:cart_id/items", CartController.getAll);
+router.get("/", Auth, CartController.getAll);
 // --- Update Cart Items
 router.put("/items", Auth, CartController.updateCart);
 // --- Add Item to Cart

@@ -1,7 +1,7 @@
 const { Cart, Cart_Item, Product, sequelize } = require("../../database/models");
 
 exports.getAll = async (req, res, next) => {
-    const cart_id = req.params.cart_id;
+    const { cart_id } = req.user;
 
     try {
         const cart = await Cart.findAll({
